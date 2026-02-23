@@ -1,0 +1,10 @@
+{
+  "id": "somenotify",
+  "name": "SomeNotify",
+  "version": "1.0.0",
+  "main": "somenotify.SomeNotify",
+  "description": "Broadcast notify messages to all servers behind Velocity",
+  "authors": [
+    "SomeOneDay"
+  ]
+}

@@ -1,0 +1,35 @@
+language: "en"
+permission: "somenotify.notify"
+reload-permission: "somenotify.reload"
+
+# Supported placeholders: {sender}, {message}
+# This value can be multiline.
+message-format: |
+  <gray>[<gold>Notify</gold>]</gray>
+  <yellow>{sender}</yellow><gray>:</gray>
+  <white>{message}</white>
+
+# Sender mode:
+# player  - name of player who executed /notify
+# custom  - value from custom-sender-name
+# console - value from console-name
+sender-mode: "player"
+custom-sender-name: "Administator"
+console-name: "Console"
+
+messages:
+  ru:
+    usage: "<red>Использование: /notify <сообщение> или /notify reload</red>"
+    no-permission: "<red>У вас нет прав на использование этой команды.</red>"
+    empty-message: "<red>Сообщение не может быть пустым.</red>"
+    sent: "<green>Сообщение отправлено ({online} игроков).</green>"
+    reload-success: "<green>Конфиг успешно перезагружен.</green>"
+    reload-failed: "<red>Не удалось перезагрузить конфиг. Проверьте консоль.</red>"
+
+  en:
+    usage: "<red>Usage: /notify <message> or /notify reload</red>"
+    no-permission: "<red>You do not have permission to use this command.</red>"
+    empty-message: "<red>Message cannot be empty.</red>"
+    sent: "<green>Message sent ({online} players).</green>"
+    reload-success: "<green>Config reloaded successfully.</green>"
+    reload-failed: "<red>Config reload failed. Check console.</red>"
