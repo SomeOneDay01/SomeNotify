@@ -110,7 +110,15 @@ public final class SomeNotify {
         changed |= setIfMissing(root.node("language"), "ru");
         changed |= setIfMissing(root.node("permission"), NOTIFY_PERMISSION);
         changed |= setIfMissing(root.node("reload-permission"), RELOAD_PERMISSION);
+        changed |= setIfMissing(root.node("message-template-mode"), "auto");
         changed |= setIfMissing(root.node("message-format"), DEFAULT_FORMAT);
+        changed |= setIfMissing(root.node("message-lines"), List.of(
+                "<gold><bold>ОПОВЕЩЕНИЕ</bold></gold>",
+                "<gray>|</gray>",
+                "<gray>|</gray> <white>{message}</white>",
+                "<gray>|</gray>",
+                "<gray>|</gray> <yellow>отправил {player}</yellow>"
+        ));
         changed |= setIfMissing(root.node("sender-mode"), "player");
         changed |= setIfMissing(root.node("custom-sender-name"), "Администрация");
         changed |= setIfMissing(root.node("console-name"), "Console");
@@ -144,7 +152,8 @@ public final class SomeNotify {
         Language language = Language.from(root.node("language").getString("ru"));
         String permission = root.node("permission").getString(NOTIFY_PERMISSION);
         String reloadPermission = root.node("reload-permission").getString(RELOAD_PERMISSION);
-        String messageFormat = readMultiLineValue(root.node("message-format"), DEFAULT_FORMAT);
+        TemplateMode templateMode = TemplateMode.from(root.node("message-template-mode").getString("auto"));
+        String messageFormat = readMessageTemplate(root, templateMode);
         String senderMode = root.node("sender-mode").getString("player");
         String customSenderName = root.node("custom-sender-name").getString("Администрация");
         String consoleName = root.node("console-name").getString("Console");
@@ -182,6 +191,18 @@ public final class SomeNotify {
         }
 
         return fallback;
+    }
+
+    private String readMessageTemplate(CommentedConfigurationNode root, TemplateMode mode) throws ConfigurateException {
+        String formatTemplate = readMultiLineValue(root.node("message-format"), DEFAULT_FORMAT);
+        List<String> lines = root.node("message-lines").getList(String.class);
+        String linesTemplate = (lines != null && !lines.isEmpty()) ? String.join("\n", lines) : "";
+
+        return switch (mode) {
+            case FORMAT -> formatTemplate;
+            case LINES -> linesTemplate.isEmpty() ? formatTemplate : linesTemplate;
+            case AUTO -> linesTemplate.isEmpty() ? formatTemplate : linesTemplate;
+        };
     }
 
     private Component parseMini(String text) {
@@ -228,9 +249,7 @@ public final class SomeNotify {
             }
 
             String senderName = resolveSender(currentConfig, invocation.source() instanceof Player ? (Player) invocation.source() : null);
-            String payload = currentConfig.messageFormat()
-                    .replace("{sender}", escapeTags(senderName))
-                    .replace("{message}", escapeTags(rawMessage));
+            String payload = applyPlaceholders(currentConfig.messageFormat(), senderName, rawMessage);
 
             Component broadcast = parseMini(payload);
 
@@ -258,6 +277,15 @@ public final class SomeNotify {
         return input.replace("<", "\\<");
     }
 
+    private static String applyPlaceholders(String template, String senderName, String message) {
+        String escapedSender = escapeTags(senderName);
+        String escapedMessage = escapeTags(message);
+        return template
+                .replace("{sender}", escapedSender)
+                .replace("{player}", escapedSender)
+                .replace("{message}", escapedMessage);
+    }
+
     private enum Language {
         RU,
         EN;
@@ -269,6 +297,23 @@ public final class SomeNotify {
             return switch (value.toLowerCase(Locale.ROOT)) {
                 case "en" -> EN;
                 default -> RU;
+            };
+        }
+    }
+
+    private enum TemplateMode {
+        AUTO,
+        FORMAT,
+        LINES;
+
+        private static TemplateMode from(String value) {
+            if (value == null) {
+                return AUTO;
+            }
+            return switch (value.toLowerCase(Locale.ROOT)) {
+                case "format" -> FORMAT;
+                case "lines" -> LINES;
+                default -> AUTO;
             };
         }
     }

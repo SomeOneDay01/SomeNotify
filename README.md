@@ -1,12 +1,13 @@
 # SomeNotify
 
-`SomeNotify` is a Velocity plugin for sending one message to all players connected through the proxy.
+`SomeNotify` is a Velocity plugin for sending message to all players connected through the proxy.
 
 ## Features
 - Command `/notify <message>`
 - Command `/notify reload` to reload `config.yml`
 - Broadcast to all online players on all backend servers
 - Configurable message format with MiniMessage
+- Explicit template mode selector: `format`, `lines`, `auto`
 - Configurable sender display mode: `player`, `custom`, `console`
 - Built-in language support: `ru`, `en`
 
@@ -35,10 +36,19 @@ language: "ru"
 permission: "somenotify.notify"
 reload-permission: "somenotify.reload"
 
+message-template-mode: "auto"
+
 message-format: |
   <gray>[<gold>Notify</gold>]</gray>
   <yellow>{sender}</yellow><gray>:</gray>
   <white>{message}</white>
+
+message-lines:
+  - "<gold><bold>ОПОВЕЩЕНИЕ</bold></gold>"
+  - "<gray>|</gray>"
+  - "<gray>|</gray> <white>{message}</white>"
+  - "<gray>|</gray>"
+  - "<gray>|</gray> <yellow>отправил {player}</yellow>"
 
 sender-mode: "player"
 custom-sender-name: "Administration"
@@ -66,9 +76,14 @@ You can replace texts in `messages.ru` with any Russian strings you want.
 
 ## Placeholders
 - `{sender}` resolved sender name based on `sender-mode`
+- `{player}` alias of `{sender}`
 - `{message}` message from command arguments
 - `{online}` number of players who received the message
 
 ## Notes
 - `message-format` supports MiniMessage tags.
+- `message-template-mode` controls which template is used:
+  - `format`: always `message-format`
+  - `lines`: always `message-lines` (fallback to `message-format` if empty)
+  - `auto`: `message-lines` when non-empty, otherwise `message-format`
 - `language` accepts `ru` or `en`. Any other value falls back to `ru`.

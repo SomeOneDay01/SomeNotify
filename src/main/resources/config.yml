@@ -2,12 +2,26 @@ language: "en"
 permission: "somenotify.notify"
 reload-permission: "somenotify.reload"
 
+# format - always use message-format
+# lines  - always use message-lines (fallback to message-format if empty)
+# auto   - use message-lines when not empty, otherwise message-format
+message-template-mode: "auto"
+
 # Supported placeholders: {sender}, {message}
 # This value can be multiline.
 message-format: |
   <gray>[<gold>Notify</gold>]</gray>
   <yellow>{sender}</yellow><gray>:</gray>
   <white>{message}</white>
+
+# Alternative template format as list of lines.
+# Supported placeholders: {sender}, {player}, {message}
+message-lines:
+  - "<gold><bold>ОПОВЕЩЕНИЕ</bold></gold>"
+  - "<gray>|</gray>"
+  - "<gray>|</gray> <white>{message}</white>"
+  - "<gray>|</gray>"
+  - "<gray>|</gray> <yellow>отправил {player}</yellow>"
 
 # Sender mode:
 # player  - name of player who executed /notify
