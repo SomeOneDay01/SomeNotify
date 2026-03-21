@@ -26,9 +26,9 @@ import java.util.Optional;
 @Plugin(
         id = "somenotify",
         name = "SomeNotify",
-        version = "1.0.0",
+        version = "1.0.1",
         description = "Broadcast notify messages to all servers behind Velocity",
-        authors = {"bonda"}
+        authors = {"SomeOneDay"}
 )
 public final class SomeNotify {
     private static final String NOTIFY_PERMISSION = "somenotify.notify";
