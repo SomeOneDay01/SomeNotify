@@ -12,7 +12,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Changed
 - Updated docs and default config to describe explicit template mode selection.
 
-## [1.1.0] - 2026-02-23
+## [1.0.1] - 2026-02-23
 ### Added
 - Added `/notify reload` command to reload `config.yml` without proxy restart.
 - Added separate reload permission: `somenotify.reload` (`reload-permission` in config).
